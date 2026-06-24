@@ -1,0 +1,73 @@
+# Sample MediaMTX server config for the T-SIMCAM project.
+#
+# The ESP32 PUBLISHES MJPEG to path `cam`. Browsers can't render MJPEG
+# over HLS/WebRTC, so when `cam` becomes ready we spawn ffmpeg to
+# transcode it to H.264 and republish as `cam_h264`. HLS/WebRTC then
+# work for that path.
+#
+# Requirements on the server:
+#   sudo apt install ffmpeg
+#
+# Run:
+#   ./mediamtx mediamtx.yml
+#
+# Endpoints once a camera is publishing:
+#   rtsp://198.211.114.79:8554/cam         (original MJPEG, VLC/ffplay)
+#   rtsp://198.211.114.79:8554/cam_h264    (transcoded H.264, VLC/ffplay)
+#   http://198.211.114.79:8888/cam_h264    (HLS, browser)
+#   http://198.211.114.79:8889/cam_h264    (WebRTC, low-latency browser)
+
+# Open access — anyone can publish + read (no auth).
+authMethod: internal
+authInternalUsers:
+  - user: any
+    pass:
+    ips: []
+    permissions:
+      - action: publish
+      - action: read
+
+rtsp: yes
+rtspAddress: :8554
+
+hls: yes
+hlsAddress: :8888
+hlsAllowOrigins: ['*']
+hlsVariant: lowLatency
+
+webrtc: yes
+webrtcAddress: :8889
+webrtcAllowOrigins: ['*']
+
+paths:
+  # Path the ESP32 publishes to. When it goes ready, spawn ffmpeg to
+  # produce an H.264 copy at `cam_h264`. The same flow restarts
+  # automatically every time the ESP32 reconnects.
+  cam:
+    # The MJPEG source has noisy/sparse RTP timestamps. Tell ffmpeg to
+    # ignore them and use wall-clock arrival time, then encode in VFR
+    # passthrough mode so it never duplicates or drops frames. This
+    # eliminates the "More than 10000 frames duplicated" stutter.
+    runOnReady: >
+      ffmpeg -hide_banner -loglevel warning
+        -use_wallclock_as_timestamps 1
+        -rtsp_transport tcp
+        -i rtsp://localhost:$RTSP_PORT/$MTX_PATH
+        -an
+        -vf "fps=15"
+        -c:v libx264 -preset ultrafast -tune zerolatency
+        -profile:v baseline -level 3.1 -pix_fmt yuv420p
+        -b:v 700k -maxrate 1100k -bufsize 300k
+        -force_key_frames 'expr:gte(t,n_forced*1)'
+        -g 15
+        -x264-params "bframes=0:scenecut=0:rc-lookahead=0"
+        -f rtsp -rtsp_transport tcp
+        rtsp://localhost:$RTSP_PORT/${MTX_PATH}_h264
+    runOnReadyRestart: yes
+
+  # Empty entry just so MediaMTX knows this path exists in advance and
+  # accepts the transcoder's incoming push.
+  cam_h264:
+
+  # Catch-all: lets any other path also be published/read with defaults.
+  all_others:

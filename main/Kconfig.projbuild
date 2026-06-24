@@ -1,0 +1,233 @@
+menu "T-SIMCAM Webcam"
+
+    config WIFI_SSID
+        string "Wi-Fi SSID"
+        default "myssid"
+        help
+            SSID of the primary Wi-Fi network the board should join.
+
+    config WIFI_PASSWORD
+        string "Wi-Fi Password"
+        default "mypassword"
+        help
+            WPA2 password for the primary Wi-Fi network.
+
+    config WIFI_SSID_2
+        string "Wi-Fi SSID (fallback 2)"
+        default ""
+        help
+            Optional second network, tried if the primary fails.
+            Leave empty to disable.
+
+    config WIFI_PASSWORD_2
+        string "Wi-Fi Password (fallback 2)"
+        default ""
+
+    config WIFI_SSID_3
+        string "Wi-Fi SSID (fallback 3)"
+        default ""
+        help
+            Optional third network, tried if the previous ones fail.
+            Leave empty to disable.
+
+    config WIFI_PASSWORD_3
+        string "Wi-Fi Password (fallback 3)"
+        default ""
+
+    config WIFI_MAX_RETRY
+        int "Wi-Fi connect retry count (per network)"
+        default 10
+        help
+            Connection attempts on one network before moving on to the
+            next configured one.
+
+    config WIFI_MAX_CYCLES
+        int "Wi-Fi full-cycle limit before giving up"
+        default 5
+        help
+            How many times to cycle through all configured networks
+            before reporting failure (which reboots the board).
+
+    config HTTP_SERVER_PORT
+        int "HTTP server port"
+        default 80
+
+    config RTSP_SERVER_PORT
+        int "RTSP server port"
+        default 8554
+
+    config MTX_HOST
+        string "MediaMTX host (IP or DNS name)"
+        default "198.211.114.79"
+        help
+            Remote MediaMTX server that the board will publish to over RTSP.
+
+    config MTX_PORT
+        int "MediaMTX RTSP port"
+        default 8554
+
+    config MTX_PATH
+        string "MediaMTX path (no leading slash)"
+        default "cam"
+
+    choice CAMERA_FRAME_SIZE
+        prompt "Camera frame size"
+        default CAMERA_FRAMESIZE_VGA
+        help
+            Lower resolution = much higher fps over Wi-Fi / public internet.
+
+        config CAMERA_FRAMESIZE_QQVGA
+            bool "QQVGA  160x120"
+        config CAMERA_FRAMESIZE_QVGA
+            bool "QVGA   320x240"
+        config CAMERA_FRAMESIZE_HVGA
+            bool "HVGA   480x320"
+        config CAMERA_FRAMESIZE_VGA
+            bool "VGA    640x480"
+        config CAMERA_FRAMESIZE_SVGA
+            bool "SVGA   800x600"
+        config CAMERA_FRAMESIZE_HD
+            bool "HD     1280x720"
+    endchoice
+
+    config CAMERA_JPEG_QUALITY
+        int "JPEG quality (1=best/largest .. 63=worst/smallest)"
+        range 5 63
+        default 15
+        help
+            Higher number = smaller files = higher achievable fps over the network.
+
+    menu "Relay output"
+
+        config RELAY_ENABLED
+            bool "Enable relay output"
+            default y
+            help
+                Drives a single GPIO pin as a digital output to switch
+                an external relay module.
+
+        if RELAY_ENABLED
+
+            config RELAY_GPIO
+                int "Relay GPIO pin"
+                default 21
+                help
+                    Default 21 is the mPCIe LED line on T-SIMCAM —
+                    broken out, no strapping or boot-state pitfalls.
+
+            config RELAY_ACTIVE_LOW
+                bool "Relay is active-low"
+                default n
+                help
+                    Most low-cost optoisolated relay modules trigger
+                    when the input is pulled LOW. Flip this on if your
+                    relay turns on when you write 0.
+
+            config RELAY_DEFAULT_ON
+                bool "Start in ON state"
+                default n
+
+            config RELAY_AUTO_TEMP
+                bool "Drive relay automatically from temperature"
+                default n
+                help
+                    Temperature comes from the BluePill sensor hub link
+                    (Sensors menu → BluePill link). The relay turns ON
+                    below MIN and OFF above MAX; HTTP manual control
+                    still works but the next reading may override it.
+
+            if RELAY_AUTO_TEMP
+
+                config RELAY_TEMP_MIN_C
+                    int "Minimum temperature (°C) — relay turns ON below this"
+                    range -40 80
+                    default 10
+
+                config RELAY_TEMP_MAX_C
+                    int "Maximum temperature (°C) — relay turns OFF above this"
+                    range -40 80
+                    default 12
+                    help
+                        Must be greater than MIN. The gap between MIN
+                        and MAX is the hysteresis band: inside it the
+                        relay holds its previous state.
+
+            endif
+
+        endif
+
+    endmenu
+
+    menu "Sensors → dhome"
+
+        config SENSORS_ENABLED
+            bool "Enable sensor task"
+            default n
+            help
+                Turn on once the BluePill sensor hub is wired up. When
+                disabled the UART is never opened and no TCP connection
+                to dhome is attempted.
+
+        if SENSORS_ENABLED
+
+            config SENSOR_NAME
+                string "Sensor station name reported to dhome"
+                default "tsimcam"
+
+            config SENSOR_PERIOD_MS
+                int "Period between reports to dhome (ms)"
+                range 200 60000
+                default 1000
+
+            config DHOME_HOST
+                string "dhome server host (IP / DNS)"
+                default "198.211.114.79"
+
+            config DHOME_PORT
+                int "dhome TCP port"
+                default 5678
+
+            menu "BluePill link (UART)"
+
+                config BP_LINK_ENABLED
+                    bool "Enable BluePill sensor hub link"
+                    default y
+                    help
+                        The BluePill (STM32F103) hosts SHT40 + VL53L1X
+                        and emits one aggregated line per second:
+                        "S:T=23.45 H=41.23 D=1238 O=0 ST=1 SV=1\n".
+                        ESP parses that and fills the dhome JSON.
+
+                config BP_LINK_UART_NUM
+                    int "UART port number (0=console, avoid)"
+                    range 1 2
+                    default 1
+
+                config BP_LINK_TX_PIN
+                    int "ESP → BluePill RX (TX) GPIO"
+                    default 45
+                    help
+                        Unused in practice (BluePill sends only); kept
+                        wired so the UART driver has a sane TX pin.
+
+                config BP_LINK_RX_PIN
+                    int "ESP ← BluePill TX (RX) GPIO"
+                    default 46
+                    help
+                        BluePill's USART2 TX (PA2) feeds this pin. On
+                        T-SIMCAM this is the mPCIe RX line, broken out
+                        on the user header.
+
+                config BP_LINK_BAUD
+                    int "UART baud rate"
+                    default 9600
+                    help
+                        Must match the BluePill firmware's USART2 baud.
+
+            endmenu
+
+        endif
+
+    endmenu
+
+endmenu

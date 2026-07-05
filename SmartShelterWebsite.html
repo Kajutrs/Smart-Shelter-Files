@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Shelter</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #2d6a4f;
+      --green-light: #40916c;
+      --green-pale: #d8f3dc;
+      --dark: #1b1b1b;
+      --mid: #555;
+      --light: #f8faf9;
+      --white: #ffffff;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.7;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+    }
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo span { font-size: 1.4rem; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 32px;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--mid);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    nav a:hover { color: var(--green); }
+
+    /* LANG SWITCHER */
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid #ddd;
+      border-radius: 20px;
+      overflow: hidden;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .lang-btn {
+      padding: 4px 14px;
+      cursor: pointer;
+      color: var(--mid);
+      transition: all .2s;
+      letter-spacing: 0.5px;
+      border: none;
+      background: none;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+    .lang-btn.active {
+      background: var(--green);
+      color: white;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+      color: white;
+      padding: 100px 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 800;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      opacity: 0.9;
+      max-width: 860px;
+      margin: 0 auto 40px;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2rem; font-weight: 800; }
+    .stat-label { font-size: 0.8rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* SECTIONS */
+    section { padding: 80px 48px; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    .section-desc {
+      color: var(--mid);
+      max-width: 680px;
+      margin-bottom: 48px;
+      font-size: 1rem;
+    }
+
+    /* PROBLEM / SOLUTION */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    .card-icon { font-size: 2rem; margin-bottom: 16px; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .card p { color: var(--mid); font-size: 0.95rem; }
+
+    /* COMPONENTS */
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .comp-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform .2s;
+    }
+    .comp-card:hover { transform: translateY(-4px); }
+    .comp-img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin: 0 auto 16px;
+      display: block;
+      border-radius: 8px;
+      background: var(--green-pale);
+      padding: 6px;
+    }
+    .comp-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+    .comp-role { font-size: 0.8rem; color: var(--mid); }
+    .comp-tag {
+      display: inline-block;
+      margin-top: 8px;
+      background: var(--green-pale);
+      color: var(--green);
+      border-radius: 8px;
+      padding: 2px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    /* DIAGRAMS */
+    .diagrams-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .tab {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+      background: var(--white);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--mid);
+      transition: all .2s;
+    }
+    .tab.active, .tab:hover {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+    .diagram-view {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .diagram-panel { display: none; }
+    .diagram-panel.active { display: block; }
+    .diagram-panel img { width: 100%; display: block; }
+    .diagram-caption {
+      padding: 16px 24px;
+      border-top: 1px solid #f0f0f0;
+      font-size: 0.85rem;
+      color: var(--mid);
+    }
+
+    /* GANTT TABLE */
+    .gantt-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      background: var(--white);
+      min-width: 900px;
+    }
+    .gantt-table thead tr:first-child th {
+      background: var(--green);
+      color: white;
+      padding: 12px 10px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .gantt-table thead tr:first-child th:first-child,
+    .gantt-table thead tr:first-child th:nth-child(2),
+    .gantt-table thead tr:first-child th:nth-child(3) {
+      background: var(--green);
+    }
+    .gantt-table thead tr:nth-child(2) th {
+      background: #f0fdf4;
+      color: var(--mid);
+      padding: 6px 4px;
+      font-size: 0.72rem;
+      text-align: center;
+      border-bottom: 2px solid #e5e5e5;
+    }
+    .gantt-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+    .gantt-table td:nth-child(n+4) {
+      padding: 4px 2px;
+      text-align: center;
+    }
+    .gantt-table tbody tr:hover { background: #f0fdf4; }
+    .gantt-cat td {
+      background: #1b4332 !important;
+      color: white !important;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 8px 12px !important;
+    }
+    .planned { color: #16a34a; font-size: 0.72rem; font-weight: 600; }
+    .actual  { color: #166534; font-size: 0.72rem; font-weight: 600; }
+    /* Planned bars - light */
+    .g-mar { background: #e9d5ff; border-radius: 3px; }
+    .g-apr { background: #bbf7d0; border-radius: 3px; }
+    .g-may { background: #fef08a; border-radius: 3px; }
+    .g-jun { background: #bae6fd; border-radius: 3px; }
+    /* Actual bars - dark */
+    .g-mar-a { background: #a855f7; border-radius: 3px; }
+    .g-apr-a { background: #16a34a; border-radius: 3px; }
+    .g-may-a { background: #ca8a04; border-radius: 3px; }
+    .g-jun-a { background: #0284c7; border-radius: 3px; }
+
+    /* BUDGET TABLE */
+    .budget-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .budget-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--white);
+    }
+    .budget-table thead tr {
+      background: var(--green);
+      color: white;
+    }
+    .budget-table th {
+      padding: 14px 20px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.3px;
+    }
+    .budget-table th:not(:first-child),
+    .budget-table td:not(:first-child) {
+      text-align: right;
+    }
+    .budget-table tbody tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.15s, transform 0.15s;
+      cursor: default;
+    }
+    .budget-table tbody tr:hover {
+      background: var(--green-pale);
+      transform: scale(1.005);
+    }
+    .budget-table td {
+      padding: 13px 20px;
+      color: var(--dark);
+    }
+    .budget-table tfoot .total-row {
+      background: var(--green-pale);
+      font-weight: 700;
+      color: var(--green);
+      font-size: 1rem;
+      border-top: 2px solid var(--green);
+    }
+    .budget-table tfoot .total-row td {
+      padding: 16px 20px;
+      color: var(--green);
+    }
+
+    /* SHELTER */
+    .shelter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .shelter-img-wrap {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .shelter-img-wrap img { width: 100%; display: block; }
+    .shelter-img-wrap .caption {
+      padding: 12px 20px;
+      font-size: 0.82rem;
+      color: var(--mid);
+      border-top: 1px solid #f0f0f0;
+    }
+
+    /* PROCESS */
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .step {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+    }
+    .step-num {
+      width: 32px; height: 32px;
+      background: var(--green);
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .step h4 { font-weight: 700; margin-bottom: 6px; font-size: 0.95rem; }
+    .step p { font-size: 0.85rem; color: var(--mid); }
+
+    /* TEAM */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .team-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .avatar {
+      width: 56px; height: 56px;
+      background: var(--green-pale);
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .team-card h4 { font-weight: 700; margin-bottom: 4px; }
+    .team-card p { font-size: 0.82rem; color: var(--mid); }
+    .team-email {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--green-light);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--green-light);
+      transition: color 0.2s;
+    }
+    .team-email:hover { color: var(--green); border-bottom-color: var(--green); }
+
+    /* FOOTER */
+    .gh-tag {
+      display: inline-block;
+      background: #fff;
+      border: 1.5px solid var(--green-light);
+      color: var(--green);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .gh-tag:hover {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .gh-btn {
+      display: inline-flex;
+      align-items: center;
+      background: var(--green);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(52,211,153,0.25);
+    }
+    .gh-btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(52,211,153,0.35);
+    }
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 32px;
+      font-size: 0.85rem;
+    }
+
+    .divider { border: none; border-top: 1px solid #eee; margin: 0; }
+
+    @media (max-width: 700px) {
+      nav { padding: 0 16px; }
+      nav ul { display: none; }
+      section { padding: 60px 20px; }
+      .hero { padding: 70px 20px; }
+      .two-col, .shelter-grid, .team-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>🐾</span> <span data-i18n="site_name">Smart Shelter</span></div>
+  <div class="nav-right">
+    <ul>
+      <li><a href="#about" data-i18n="nav_about">About</a></li>
+      <li><a href="#components" data-i18n="nav_components">Components</a></li>
+      <li><a href="#diagrams" data-i18n="nav_arch">Architecture</a></li>
+      <li><a href="#shelter" data-i18n="nav_construction">Construction</a></li>
+      <li><a href="#team" data-i18n="nav_team">Team</a></li>
+    </ul>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('ka')">ქარ</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">IoT · FreeRTOS · Go · WebRTC</div>
+  <h1 data-i18n="site_name">Smart Shelter</h1>
+  <p data-i18n="hero_desc">An automated IoT-powered shelter system that monitors temperature, detects animal presence, and controls heating remotely: keeping street animals safe on the coldest nights.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">10°C</div>
+      <div class="stat-label" data-i18n="stat1">Heating threshold</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" data-i18n="stat_range">480mm</div>
+      <div class="stat-label" data-i18n="stat2">Presence detection</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">378₾</div>
+      <div class="stat-label" data-i18n="stat3">Total component cost</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label" data-i18n="stat4">Remote monitoring</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label" data-i18n="about_label">The Project</div>
+  <h2 data-i18n="about_h2">Problem & Solution</h2>
+  <p class="section-desc" data-i18n="about_desc">Thousands of street animals face life-threatening cold each winter. Existing wooden shelters can block wind but cannot generate heat.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-icon">❄️</div>
+      <h3 data-i18n="prob_h3">The Problem</h3>
+      <p data-i18n="prob_p">Volunteers and NGOs build wooden shelters across the city, but wood alone cannot generate heat. On the coldest nights, animals inside these shelters remain at serious risk of hypothermia: even when a shelter is physically present.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">💡</div>
+      <h3 data-i18n="sol_h3">Our Solution</h3>
+      <p data-i18n="sol_p">Smart Shelter integrates IoT sensors, automated heating control, and real-time remote monitoring into a single system. Heating turns on automatically when an animal is detected inside and temperature drops below 10°C: no human intervention required.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-label" data-i18n="how_label">System Operation</div>
+  <h2 data-i18n="how_h2">How It Works</h2>
+  <p class="section-desc" data-i18n="how_desc">Three parallel processes run continuously, powered by two microcontrollers and a cloud server.</p>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4 data-i18n="step1_h">Sensor Reading</h4>
+      <p data-i18n="step1_p">BluePill reads the ToF distance sensor every 50ms via I2C and receives temperature/humidity from SHT40 via UART interrupt. Every 1 second it sends aggregated data to ESP32.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4 data-i18n="step2_h">Decision Logic</h4>
+      <p data-i18n="step2_p">ESP32 (FreeRTOS) checks conditions every 500ms. If temperature &lt; 10°C and animal is inside (distance &lt; 500mm) for 3 consecutive checks: heating turns on via GPIO → transistor → relay chain.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4 data-i18n="step3_h">Data Upload</h4>
+      <p data-i18n="step3_p">ESP32 sends sensor data as JSON over TCP to the Go backend on DigitalOcean (port 5678). The backend serves it via HTTP API (port 8080) to the web interface.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4 data-i18n="step4_h">Live Video</h4>
+      <p data-i18n="step4_p">OV5640 camera captures frames → ESP32 encodes to JPEG → RTSP stream → MediaMTX on DigitalOcean → converted to H.264 via ffmpeg → delivered to browser via WebRTC.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <h4 data-i18n="step5_h">Heating Control</h4>
+      <p data-i18n="step5_p">GPIO signal → 2N2222A transistor (amplifies) → opto-isolated relay (electrical isolation) → 12V heating elements switch on. Hysteresis: turns off above 12°C.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <h4 data-i18n="step6_h">Remote Monitoring</h4>
+      <p data-i18n="step6_p">Volunteer opens a browser, types the DigitalOcean IP, and sees live sensor data and video in real time. Available in Georgian and English. Supports up to 4 shelters simultaneously.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- BLOCK DIAGRAM -->
+<section id="blockdiagram">
+  <div class="section-label" data-i18n="block_label">Architecture</div>
+  <h2 data-i18n="block_h2">ფუნქციონალური ბლოკ-დიაგრამა</h2>
+  <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+    <img src="images/system_diagram.png" alt="System Block Diagram" style="width:100%;display:block;" />
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- COMPONENTS -->
+<section id="components">
+  <div class="section-label" data-i18n="comp_label">Hardware</div>
+  <h2 data-i18n="comp_h2">Components</h2>
+  <p class="section-desc" data-i18n="comp_desc">Each component was chosen for a specific role in the system. Total cost: 378 GEL.</p>
+  <div class="components-grid">
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/lilygo.jpg" alt="LilyGo T-SIMCAM">
+      <div class="comp-name">LilyGo T-SIMCAM</div>
+      <div class="comp-role" data-i18n="c1_role">ESP32-S3 + OV5640 camera module. Runs FreeRTOS, handles Wi-Fi, video streaming, heating logic and server communication.</div>
+      <span class="comp-tag" data-i18n="c1_tag">Main controller</span>
+    </div>
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/bluepill.jpg" alt="STM32 BluePill">
+      <div class="comp-name">STM32F103 BluePill</div>
+      <div class="comp-role" data-i18n="c2_role">Reads both sensors and forwards aggregated data to ESP32 every 1 second over UART. Bare-metal, no OS.</div>
+      <span class="comp-tag" data-i18n="c2_tag">Sensor hub</span>
+    </div>
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/vl53l1x.jpg" alt="VL53L1X ToF Sensor">
+      <div class="comp-name">VL53L1X ToF Sensor</div>
+      <div class="comp-role" data-i18n="c3_role">Time-of-Flight distance sensor. Detects animal presence if distance &lt; 500mm. Communicates via I2C at address 0x29.</div>
+      <span class="comp-tag">I2C · 50ms poll</span>
+    </div>
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/sht40.jpg" alt="SHT40">
+      <div class="comp-name">SHT40</div>
+      <div class="comp-role" data-i18n="c4_role">Temperature and humidity sensor. Internal UART bridge module: sends ASCII readings automatically. Received by BluePill via interrupt.</div>
+      <span class="comp-tag">UART · Interrupt</span>
+    </div>
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/transistor.jpg" alt="2N2222A Transistor">
+      <div class="comp-name">2N2222A Transistor</div>
+      <div class="comp-role" data-i18n="c5_role">NPN transistor. Amplifies the 3.3V GPIO signal from ESP32 to drive the 5V relay coil. R_B = 3.3kΩ base resistor.</div>
+      <span class="comp-tag" data-i18n="c5_tag">Signal amplifier</span>
+    </div>
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/relay.jpg" alt="Relay Module">
+      <div class="comp-name" data-i18n="c6_name">Opto-isolated Relay</div>
+      <div class="comp-role" data-i18n="c6_role">SRD-05VDC. Switches the 12V heating circuit. Optical isolation keeps low-voltage control separate from high-voltage load.</div>
+      <span class="comp-tag">5V coil · 12V switch</span>
+    </div>
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/heater.jpg" alt="Heating Element">
+      <div class="comp-name" data-i18n="c7_name">Heating Elements</div>
+      <div class="comp-role" data-i18n="c7_role">12V/30W flexible polyimide heating strips (×15). Powered directly from 12V supply through the relay contact.</div>
+      <span class="comp-tag">12V · 30W each</span>
+    </div>
+
+    <div class="comp-card">
+      <img class="comp-img" src="images/digitalocean.png" alt="DigitalOcean Server">
+      <div class="comp-name">DigitalOcean Server</div>
+      <div class="comp-role" data-i18n="c8_role">Fixed public IP. Runs Go backend (TCP :5678, HTTP :8080) and MediaMTX for RTSP→WebRTC video conversion.</div>
+      <span class="comp-tag">Go · MediaMTX</span>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- DIAGRAMS -->
+<section id="diagrams">
+  <div class="section-label" data-i18n="diag_label">Architecture</div>
+  <h2 data-i18n="diag_h2">C4 Model Diagrams</h2>
+  <p class="section-desc" data-i18n="diag_desc">System architecture visualized at three levels of detail: Context, Containers, and Components.</p>
+
+  <div class="diagrams-tabs">
+    <div class="tab active" onclick="showDiagram('c1', this)" data-i18n="tab_c1">C1: System Context</div>
+    <div class="tab" onclick="showDiagram('c2_control', this)" data-i18n="tab_c2ctrl">C2: Control System</div>
+    <div class="tab" onclick="showDiagram('c2_web', this)" data-i18n="tab_c2web">C2: Web Technologies</div>
+    <div class="tab" onclick="showDiagram('c2_heating', this)" data-i18n="tab_c2heat">C2: Heating</div>
+    <div class="tab" onclick="showDiagram('c3_control', this)" data-i18n="tab_c3ctrl">C3: Control Components</div>
+    <div class="tab" onclick="showDiagram('c3_web', this)" data-i18n="tab_c3web">C3: Web Components</div>
+  </div>
+
+  <div class="diagram-view">
+    <div class="diagram-panel active" id="d-c1">
+      <img src="diagrams/c1-1.png" alt="C1 System Context" />
+      <div class="diagram-caption" data-i18n="cap_c1">C1: Highest level view: Smart Shelter system and its external actors: the volunteer (observer), the shelter, and the animal (beneficiary).</div>
+    </div>
+    <div class="diagram-panel" id="d-c2_control">
+      <img src="diagrams/c2_control-1.png" alt="C2 Control System" />
+      <div class="diagram-caption" data-i18n="cap_c2ctrl">C2: Control System: Data acquisition → Decision logic → Relay control → Server connection. Data flows left to right with a feedback loop from the heating subsystem.</div>
+    </div>
+    <div class="diagram-panel" id="d-c2_web">
+      <img src="diagrams/c2_web-1.png" alt="C2 Web Technologies" />
+      <div class="diagram-caption" data-i18n="cap_c2web">C2: Web Technologies on DigitalOcean: Go backend (JSON/TCP), MediaMTX (RTSP→WebRTC), and the HTML/JS web interface served over HTTP.</div>
+    </div>
+    <div class="diagram-panel" id="d-c2_heating">
+      <img src="diagrams/c2_heating-1.png" alt="C2 Heating and Monitoring" />
+      <div class="diagram-caption" data-i18n="cap_c2heat">C2: Heating & Environment Monitoring: SHT40 (UART), ToF sensor (I2C), relay (5V coil), and 12V heating elements: all controlled by the Control System via GPIO.</div>
+    </div>
+    <div class="diagram-panel" id="d-c3_control">
+      <img src="diagrams/c3_control-1.png" alt="C3 Control System Components" />
+      <div class="diagram-caption" data-i18n="cap_c3ctrl">C3: Inside the Control System: BluePill reads sensors, sends data to ESP32 via UART. ESP32 runs decision logic, drives the relay chain (GPIO → 2N2222A → opto-relay), and handles Wi-Fi + camera streaming.</div>
+    </div>
+    <div class="diagram-panel" id="d-c3_web">
+      <img src="diagrams/c3_web-1.png" alt="C3 Web Components" />
+      <div class="diagram-caption" data-i18n="cap_c3web">C3: Inside Web Technologies: TCP server (port 5678), logic module, HTTP API (port 8080), MediaMTX RTSP receiver + WebRTC publisher, and three web interface panels: sensor data, video player, and manual control.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- GANTT -->
+<section id="gantt" style="max-width:1200px;">
+  <div class="section-label" data-i18n="gantt_label">Planning</div>
+  <h2 data-i18n="gantt_h2">განტის დიაგრამა</h2>
+  <div style="display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;font-size:0.82rem;">
+    <span style="display:flex;align-items:center;gap:6px;"><span style="width:24px;height:12px;border-radius:3px;background:#4ade80;display:inline-block;"></span> <span data-i18n="gantt_planned">დაგეგმილი</span></span>
+    <span style="display:flex;align-items:center;gap:6px;"><span style="width:24px;height:12px;border-radius:3px;background:#166534;display:inline-block;"></span> <span data-i18n="gantt_actual">რეალური</span></span>
+  </div>
+  <div style="overflow-x:auto;border-radius:var(--radius);box-shadow:var(--shadow);">
+  <table class="gantt-table">
+    <thead>
+      <tr>
+        <th rowspan="2" style="min-width:220px;" data-i18n="gantt_task">ამოცანა</th>
+        <th rowspan="2" style="min-width:130px;" data-i18n="gantt_student">სტუდენტი</th>
+        <th rowspan="2" style="min-width:90px;" data-i18n="gantt_status">სტატუსი</th>
+        <th colspan="4" style="background:#a855f7;">მარტი</th>
+        <th colspan="4" style="background:#22c55e;">აპრილი</th>
+        <th colspan="4" style="background:#f59e0b;">მაისი</th>
+        <th colspan="4" style="background:#38bdf8;">ივნისი</th>
+      </tr>
+      <tr>
+        <th>კვ.1</th><th>კვ.2</th><th>კვ.3</th><th>კვ.4</th>
+        <th>კვ.1</th><th>კვ.2</th><th>კვ.3</th><th>კვ.4</th>
+        <th>კვ.1</th><th>კვ.2</th><th>კვ.3</th><th>კვ.4</th>
+        <th>კვ.1</th><th>კვ.2</th><th>კვ.3</th><th>კვ.4</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 1. SOFTWARE -->
+      <tr class="gantt-cat"><td colspan="19">1. პროგრამული უზრუნველყოფა</td></tr>
+      <tr><td>ESP32-S3 პროგრამული უზრუნველყოფა</td><td>თამარ ჯაში</td><td class="planned">დაგეგმილი</td><td class="g-mar"></td><td class="g-mar"></td><td class="g-mar"></td><td class="g-mar"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td class="g-mar-a"></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>BluePill პროგრამული უზრუნველყოფა</td><td>თამარ ჯაში</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td class="g-mar"></td><td class="g-apr"></td><td class="g-apr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Wi-Fi კომუნიკაციის გამართვა</td><td>მარი დავლაძე</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td class="g-mar"></td><td class="g-apr"></td><td class="g-apr"></td><td class="g-apr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td class="g-may-a"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>ვიდეო სტრიმის განხორციელება</td><td>გრიშა ტონერიანი</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may"></td><td class="g-may"></td><td class="g-may"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may-a"></td><td class="g-may-a"></td><td class="g-may-a"></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <!-- 2. SERVER & WEB -->
+      <tr class="gantt-cat"><td colspan="19">2. სერვერი და ვებინტერფეისი</td></tr>
+      <tr><td>Go backend-ის დაწერა</td><td>გრიშა, მარი</td><td class="planned">დაგეგმილი</td><td class="g-mar"></td><td class="g-mar"></td><td class="g-mar"></td><td class="g-mar"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td class="g-mar-a"></td><td class="g-mar-a"></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Frontend / ინტერფეისის დიზაინი</td><td>თამარ ჯაში</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td class="g-apr"></td><td class="g-apr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>სერვერის კონფიგურაცია</td><td>მარი დავლაძე</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may"></td><td class="g-may"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may-a"></td><td class="g-may-a"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <!-- 3. HARDWARE -->
+      <tr class="gantt-cat"><td colspan="19">3. აპარატურა და მონტაჟი</td></tr>
+      <tr><td>სქემის დიზაინი</td><td>თამარ ჯაში</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td class="g-apr"></td><td class="g-apr"></td><td class="g-apr"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td class="g-apr-a"></td><td class="g-apr-a"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>სახლის კონსტრუქციის აწყობა</td><td>ყველა</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may"></td><td class="g-may"></td><td class="g-may"></td><td class="g-may"></td><td class="g-may"></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may-a"></td><td class="g-may-a"></td><td class="g-may-a"></td><td class="g-may-a"></td><td class="g-jun-a"></td><td></td><td></td><td></td></tr>
+      <tr><td>ელექტრონიკის მონტაჟი</td><td>ყველა</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-jun"></td><td class="g-jun"></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-jun-a"></td><td class="g-jun-a"></td><td></td></tr>
+      <!-- 4. TESTING -->
+      <tr class="gantt-cat"><td colspan="19">4. ტესტირება</td></tr>
+      <tr><td>სენსორების ტესტი</td><td>გრიშა ტონერიანი</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may"></td><td class="g-may"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may-a"></td><td class="g-may-a"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>თერმოსტატის ტესტი</td><td>თამარ ჯაში</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may"></td><td class="g-may"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may-a"></td><td class="g-may-a"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <!-- 5. DOCUMENTATION -->
+      <tr class="gantt-cat"><td colspan="19">5. დოკუმენტაცია</td></tr>
+      <tr><td>პროექტის საბოლოო ანგარიში</td><td>ყველა</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may"></td><td class="g-may"></td><td class="g-jun"></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-may-a"></td><td class="g-jun-a"></td><td class="g-jun-a"></td><td></td><td></td></tr>
+      <tr><td>პრეზენტაციის მომზადება</td><td>ყველა</td><td class="planned">დაგეგმილი</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-jun"></td><td class="g-jun"></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td class="actual">რეალური</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="g-jun-a"></td><td class="g-jun-a"></td><td></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- BUDGET -->
+<!-- SHELTER -->
+<section id="shelter" style="max-width:1300px;">
+  <div class="section-label" data-i18n="shelter_label">Physical Build</div>
+  <h2 data-i18n="shelter_h2">Shelter Construction</h2>
+  <p class="section-desc" data-i18n="shelter_desc">500×500×550mm wooden structure, elevated 80mm off the ground. Toli-covered roof with overhang. Side-positioned entrance for wind protection.</p>
+
+  <div class="shelter-img-wrap" style="margin-bottom:24px;">
+    <img src="assembly_diagram.png" alt="Mounting & Assembly Diagram" style="width:100%;display:block;" />
+    <div class="caption" data-i18n="shelter_cap1">Electronics layout: component placement inside the enclosure (20×15cm panel)</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:0;">
+    <div class="shelter-img-wrap">
+      <img src="drawing_front.png" alt="Front view" style="width:100%;display:block;" />
+      <div class="caption" data-i18n="shelter_cap_front">წინა მხარე</div>
+    </div>
+    <div class="shelter-img-wrap">
+      <img src="drawing_side.png" alt="Side view" style="width:100%;display:block;" />
+      <div class="caption" data-i18n="shelter_cap_side">გვერდითა მხარე</div>
+    </div>
+    <div class="shelter-img-wrap">
+      <img src="drawing_top.png" alt="Top view" style="width:100%;display:block;" />
+      <div class="caption" data-i18n="shelter_cap_top">ზედა მხარე</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<section id="budget">
+  <div class="section-label" data-i18n="budget_label">Budget</div>
+  <h2 data-i18n="budget_h2">ბიუჯეტი</h2>
+  <div class="budget-wrap">
+    <table class="budget-table">
+      <thead>
+        <tr>
+          <th data-i18n="b_col1">მოწყობილობა / დეტალი</th>
+          <th data-i18n="b_col2">რაოდ.</th>
+          <th data-i18n="b_col3">ფასი / ერთეული (₾)</th>
+          <th data-i18n="b_col4">ჯამი (₾)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>LilyGo T-SIMCAM (ESP32-S3)</td><td>1</td><td>84.49</td><td>84.49</td></tr>
+        <tr><td>STM32F103C8T6 BluePill</td><td>1</td><td>18.00</td><td>18.00</td></tr>
+        <tr><td>VL53L1X ToF სენსორი</td><td>1</td><td>39.00</td><td>39.00</td></tr>
+        <tr><td>SHT40 სენსორი</td><td>1</td><td>18.00</td><td>18.00</td></tr>
+        <tr><td>რელე</td><td>1</td><td>12.00</td><td>12.00</td></tr>
+        <tr><td>12V გამათბობელი ელემენტები</td><td>15</td><td>5.00</td><td>75.00</td></tr>
+        <tr><td>12V/5A DC ადაპტერი</td><td>1</td><td>25.00</td><td>25.00</td></tr>
+        <tr><td>5V/2A USB ადაპტერი</td><td>1</td><td>12.00</td><td>12.00</td></tr>
+        <tr><td>ხის ფანერი 50×50 სმ</td><td>4</td><td>15.00</td><td>60.00</td></tr>
+        <tr><td>ტოლის ნაჭერი (სახურავისთვის)</td><td>2</td><td>6.00</td><td>12.00</td></tr>
+        <tr><td>2N2222A ტრანზისტორი</td><td>1</td><td>0.50</td><td>0.50</td></tr>
+        <tr><td>მავთულები / jumper wires</td><td>20</td><td>0.30</td><td>6.00</td></tr>
+        <tr><td>რეზისტორი 1kΩ (R_B)</td><td>1</td><td>0.10</td><td>0.10</td></tr>
+        <tr><td>სამონტაჟო ყუთი</td><td>1</td><td>16.00</td><td>16.00</td></tr>
+      </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td data-i18n="b_total">სულ</td><td></td><td></td><td>378.09</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- TEAM -->
+<section id="team">
+  <div class="section-label" data-i18n="team_label">The Team</div>
+  <h2 data-i18n="team_h2">Who Built It</h2>
+  <p class="section-desc" data-i18n="team_desc">A three-person team: Tbilisi, Georgia.</p>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="avatar">👩‍💻</div>
+      <h4 data-i18n="team1_name">Tamar Jashi</h4>
+      <p data-i18n="team1_p">Technical Lead: Hardware & Frontend. Schematic design, software development, project management, documentation.</p>
+      <a href="mailto:tamar.jashi.1@iliauni.edu.ge" class="team-email">tamar.jashi.1@iliauni.edu.ge</a>
+    </div>
+    <div class="team-card">
+      <div class="avatar">👨‍💻</div>
+      <h4 data-i18n="team2_name">Grisha Toneriani</h4>
+      <p data-i18n="team2_p">Technical Lead: Backend & Streaming. Go server, MediaMTX integration, video pipeline, documentation.</p>
+      <a href="mailto:grisha.toneriani.1@iliauni.edu.ge" class="team-email">grisha.toneriani.1@iliauni.edu.ge</a>
+    </div>
+    <div class="team-card">
+      <div class="avatar">👩‍💻</div>
+      <h4 data-i18n="team3_name">Mari Davladze</h4>
+      <p data-i18n="team3_p">Embedded Software Specialist. System administration, backend development, budget management, documentation.</p>
+      <a href="mailto:mari.davladze.1@iliauni.edu.ge" class="team-email">mari.davladze.1@iliauni.edu.ge</a>
+    </div>
+  </div>
+</section>
+
+<section id="github" style="background:var(--green-pale);padding:60px 24px;text-align:center;max-width:100%;margin:0;">
+  <div class="section-label" data-i18n="gh_label">Repository</div>
+  <h2 data-i18n="gh_h2" style="margin-bottom:8px;">პროექტის ფაილები GitHub-ზე</h2>
+  <p data-i18n="gh_desc" style="color:#555;max-width:560px;margin:0 auto 32px;font-size:0.97rem;">პროექტის ყველა მასალა ღიაა და ხელმისაწვდომია GitHub-ის საცავში.</p>
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:36px;">
+    <a href="https://github.com/Kajutrs/Smart-Shelter-Files/tree/main/%E1%83%9C%E1%83%90%E1%83%AE%E1%83%90%E1%83%96%E1%83%94%E1%83%91%E1%83%98" target="_blank" rel="noopener" class="gh-tag" data-i18n="gh_t1">ნახაზები</a>
+    <a href="https://github.com/Kajutrs/Smart-Shelter-Files/tree/main/%E1%83%AA%E1%83%AE%E1%83%A0%E1%83%98%E1%83%9A%E1%83%94%E1%83%91%E1%83%98" target="_blank" rel="noopener" class="gh-tag" data-i18n="gh_t2">ცხრილები</a>
+    <a href="https://github.com/Kajutrs/Smart-Shelter-Files/blob/main/%E1%83%A1%E1%83%90%E1%83%91%E1%83%9D%E1%83%9A%E1%83%9D%E1%83%9D%20%E1%83%90%E1%83%9C%E1%83%92%E1%83%90%E1%83%A0%E1%83%98%E1%83%A8%E1%83%98.pdf" target="_blank" rel="noopener" class="gh-tag" data-i18n="gh_t3">საბოლოო ანგარიში</a>
+    <a href="https://github.com/Kajutrs/Smart-Shelter-Files/tree/main/Datasheets" target="_blank" rel="noopener" class="gh-tag" data-i18n="gh_t4">დატაშიტები</a>
+    <a href="https://github.com/Kajutrs/Smart-Shelter-Files/blob/main/%E1%83%9B%E1%83%9D%E1%83%9B%E1%83%AE%E1%83%9B%E1%83%90%E1%83%A0%E1%83%94%E1%83%91%E1%83%9A%E1%83%98%E1%83%A1%20%E1%83%A1%E1%83%90%E1%83%AE%E1%83%94%E1%83%9A%E1%83%9B%E1%83%AB%E1%83%A6%E1%83%95%E1%83%90%E1%83%9C%E1%83%94%E1%83%9A%E1%83%9D.docx" target="_blank" rel="noopener" class="gh-tag" data-i18n="gh_t5">მომხმარებლის სახელმძღვანელო</a>
+    <a href="https://github.com/Kajutrs/Smart-Shelter-Files/tree/main/main" target="_blank" rel="noopener" class="gh-tag" data-i18n="gh_t6">კოდები</a>
+    <span class="gh-tag" data-i18n="gh_t7">პრეზენტაცია</span>
+  </div>
+  <a href="https://github.com/Kajutrs/Smart-Shelter-Files" target="_blank" rel="noopener" class="gh-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:8px;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    <span data-i18n="gh_btn">GitHub საცავი</span>
+  </a>
+</section>
+
+<footer>
+  <p data-i18n="footer">Smart Shelter · IoT System for Street Animal Welfare · 2026</p>
+</footer>
+
+<script>
+  const translations = {
+    en: {
+      nav_about: "About",
+      nav_components: "Components",
+      nav_arch: "Architecture",
+      nav_construction: "Construction",
+      nav_team: "Team",
+      hero_desc: "An automated IoT-powered shelter system that monitors temperature, detects animal presence, and controls heating remotely: keeping street animals safe on the coldest nights.",
+      stat1: "Heating threshold",
+      stat_range: "480mm",
+      stat2: "Presence detection",
+      stat3: "Total component cost",
+      stat4: "Remote monitoring",
+      about_label: "The Project",
+      about_h2: "Problem & Solution",
+      about_desc: "Thousands of street animals face life-threatening cold each winter. Existing wooden shelters can block wind but cannot generate heat.",
+      prob_h3: "The Problem",
+      prob_p: "Volunteers and NGOs build wooden shelters across the city, but wood alone cannot generate heat. On the coldest nights, animals inside these shelters remain at serious risk of hypothermia: even when a shelter is physically present.",
+      sol_h3: "Our Solution",
+      sol_p: "Smart Shelter integrates IoT sensors, automated heating control, and real-time remote monitoring into a single system. Heating turns on automatically when an animal is detected inside and temperature drops below 10°C: no human intervention required.",
+      how_label: "System Operation",
+      block_label: "Architecture",
+      block_h2: "Functional Block Diagram",
+      how_h2: "How It Works",
+      how_desc: "Three parallel processes run continuously, powered by two microcontrollers and a cloud server.",
+      step1_h: "Sensor Reading",
+      step1_p: "BluePill reads the ToF distance sensor every 50ms via I2C and receives temperature/humidity from SHT40 via UART interrupt. Every 1 second it sends aggregated data to ESP32.",
+      step2_h: "Decision Logic",
+      step2_p: "ESP32 (FreeRTOS) checks conditions every 500ms. If temperature < 10°C and animal is inside (distance < 500mm) for 3 consecutive checks: heating turns on via GPIO → transistor → relay chain.",
+      step3_h: "Data Upload",
+      step3_p: "ESP32 sends sensor data as JSON over TCP to the Go backend on DigitalOcean (port 5678). The backend serves it via HTTP API (port 8080) to the web interface.",
+      step4_h: "Live Video",
+      step4_p: "OV5640 camera captures frames → ESP32 encodes to JPEG → RTSP stream → MediaMTX on DigitalOcean → converted to H.264 via ffmpeg → delivered to browser via WebRTC.",
+      step5_h: "Heating Control",
+      step5_p: "GPIO signal → 2N2222A transistor (amplifies) → opto-isolated relay (electrical isolation) → 12V heating elements switch on. Hysteresis: turns off above 12°C.",
+      step6_h: "Remote Monitoring",
+      step6_p: "Volunteer opens a browser, types the DigitalOcean IP, and sees live sensor data and video in real time. Available in Georgian and English. Supports up to 4 shelters simultaneously.",
+      comp_label: "Hardware",
+      comp_h2: "Components",
+      comp_desc: "Each component was chosen for a specific role in the system. Total cost: 378 GEL.",
+      c1_role: "ESP32-S3 + OV5640 camera module. Runs FreeRTOS, handles Wi-Fi, video streaming, heating logic and server communication.",
+      c1_tag: "Main controller",
+      c2_role: "Reads both sensors and forwards aggregated data to ESP32 every 1 second over UART. Bare-metal, no OS.",
+      c2_tag: "Sensor hub",
+      c3_role: "Time-of-Flight distance sensor. Detects animal presence if distance < 500mm. Communicates via I2C at address 0x29.",
+      c4_role: "Temperature and humidity sensor. Internal UART bridge module: sends ASCII readings automatically. Received by BluePill via interrupt.",
+      c5_role: "NPN transistor. Amplifies the 3.3V GPIO signal from ESP32 to drive the 5V relay coil. R_B = 3.3kΩ base resistor.",
+      c5_tag: "Signal amplifier",
+      c6_name: "Opto-isolated Relay",
+      c6_role: "SRD-05VDC. Switches the 12V heating circuit. Optical isolation keeps low-voltage control separate from high-voltage load.",
+      c7_name: "Heating Elements",
+      c7_role: "12V/30W flexible polyimide heating strips (×15). Powered directly from 12V supply through the relay contact.",
+      c8_role: "Fixed public IP. Runs Go backend (TCP :5678, HTTP :8080) and MediaMTX for RTSP→WebRTC video conversion.",
+      gantt_label: "Planning", gantt_h2: "Gantt Diagram", gantt_planned: "Planned", gantt_actual: "Actual", gantt_task: "Task", gantt_student: "Student", gantt_status: "Status",
+      budget_label: "Budget",
+      budget_h2: "Budget",
+      b_col1: "Component / Item", b_col2: "Qty", b_col3: "Unit Price (₾)", b_col4: "Total (₾)", b_total: "Total",
+      diag_label: "Architecture",
+      diag_h2: "C4 Model Diagrams",
+      diag_desc: "System architecture visualized at three levels of detail: Context, Containers, and Components.",
+      tab_c1: "C1: System Context",
+      tab_c2ctrl: "C2: Control System",
+      tab_c2web: "C2: Web Technologies",
+      tab_c2heat: "C2: Heating",
+      tab_c3ctrl: "C3: Control Components",
+      tab_c3web: "C3: Web Components",
+      cap_c1: "C1: Highest level view: Smart Shelter system and its external actors: the volunteer (observer), the shelter, and the animal (beneficiary).",
+      cap_c2ctrl: "C2: Control System: Data acquisition → Decision logic → Relay control → Server connection. Data flows left to right with a feedback loop from the heating subsystem.",
+      cap_c2web: "C2: Web Technologies on DigitalOcean: Go backend (JSON/TCP), MediaMTX (RTSP→WebRTC), and the HTML/JS web interface served over HTTP.",
+      cap_c2heat: "C2: Heating & Environment Monitoring: SHT40 (UART), ToF sensor (I2C), relay (5V coil), and 12V heating elements: all controlled by the Control System via GPIO.",
+      cap_c3ctrl: "C3: Inside the Control System: BluePill reads sensors, sends data to ESP32 via UART. ESP32 runs decision logic, drives the relay chain (GPIO → 2N2222A → opto-relay), and handles Wi-Fi + camera streaming.",
+      cap_c3web: "C3: Inside Web Technologies: TCP server (port 5678), logic module, HTTP API (port 8080), MediaMTX RTSP receiver + WebRTC publisher, and three web interface panels: sensor data, video player, and manual control.",
+      shelter_label: "Physical Build",
+      shelter_h2: "Shelter Construction",
+      shelter_desc: "500×500×550mm wooden structure, elevated 80mm off the ground. Toli-covered roof with overhang. Side-positioned entrance for wind protection.",
+      shelter_cap1: "Electronics layout: component placement inside the enclosure (20×15cm panel)",
+      shelter_cap2: "Engineering drawing: shelter side view with dimensions",
+      shelter_cap_front: "Front view",
+      shelter_cap_side: "Side view",
+      shelter_cap_top: "Top view",
+      team_label: "The Team",
+      team_h2: "Who Built It",
+      team_desc: "A three-person team: Tbilisi, Georgia.",
+      site_name: "Smart Shelter",
+      team1_name: "Tamar Jashi",
+      team2_name: "Grisha Toneriani",
+      team3_name: "Mari Davladze",
+      team1_p: "Technical Lead: Hardware & Frontend. Schematic design, software development, project management, documentation.",
+      team2_p: "Technical Lead: Backend & Streaming. Go server, MediaMTX integration, video pipeline, documentation.",
+      team3_p: "Embedded Software Specialist. System administration, backend development, budget management, documentation.",
+      gh_label: "Repository",
+      gh_h2: "Project Files on GitHub",
+      gh_desc: "All project materials are open and available in the GitHub repository.",
+      gh_t1: "Drawings", gh_t2: "Spreadsheets", gh_t3: "Final Report",
+      gh_t4: "Datasheets", gh_t5: "User Manual", gh_t6: "Code", gh_t7: "Presentation",
+      gh_btn: "GitHub Repository",
+      footer: "Smart Shelter · IoT System for Street Animal Welfare · 2026"
+    },
+    ka: {
+      nav_about: "პროექტი",
+      nav_components: "კომპონენტები",
+      nav_arch: "არქიტექტურა",
+      nav_construction: "მშენებლობა",
+      nav_team: "გუნდი",
+      hero_desc: "ნამუშევარი წარმოადგენს ნივთების ინტერნეტზე (IoT) დაფუძნებულ ავტომატურ სისტემას, რომელიც ზამთრის ცივ ღამეებში უსახლკარო ცხოველების უსაფრთხოებასა და გადარჩენაზე ზრუნავს. სისტემა აღჭურვილია სპეციალური სენსორებით, რომლებიც გარემო ტემპერატურას აკონტროლებენ და ცხოველის მიახლოებას აფიქსირებენ, რის შემდეგაც გათბობა ავტომატურად ირთვება.",
+      stat1: "გათბობის ზღვარი",
+      stat_range: "480მმ",
+      stat2: "მანძილის ზღვარი",
+      stat3: "კომპონენტების ღირებულება",
+      stat4: "დისტანციური მონიტორინგი",
+      about_label: "პროექტი",
+      about_h2: "პრობლემა და გამოსავალი",
+      about_desc: "ზამთრის პერიოდში ათასობით ქუჩის ცხოველის სიცოცხლეს მკაცრი კლიმატური პირობები უქმნის საფრთხეს. გავრცელებული ხის თავშესაფრები ეფექტურად აკავებს ქარს, თუმცა ვერ უზრუნველყოფს ცხოველებისთვის აუცილებელი სითბოს გენერირებას.",
+      prob_h3: "პრობლემა",
+      prob_p: "მიუხედავად იმისა, რომ მოხალისეები და არასამთავრობო ორგანიზაციები ქალაქში აქტიურად აშენებენ ხის სახლებს, მხოლოდ ხის კონსტრუქციას სითბოს წარმოქმნა არ შეუძლია. შედეგად, ყველაზე მკაცრ და ცივ ღამეებში, ამ თავშესაფრებში მყოფი ცხოველები მაინც ჰიპოთერმიის სერიოზული საფრთხის წინაშე დგებიან.",
+      sol_h3: "ჩვენი გამოსავალი",
+      sol_p: "ჭკვიანი თავშესაფარი ერთიან სისტემაში აერთიანებს IoT სენსორებს, ავტომატურ გათბობასა და რეალურ დროში დისტანციური მონიტორინგის ფუნქციას. გათბობა ავტომატურად, ადამიანის ჩარევის გარეშე ირთვება, როგორც კი თავშესაფარში ცხოველი შევა და შიდა ტემპერატურა 10°C-ზე დაბლა ჩამოვა.",
+      how_label: "სისტემის მუშაობა",
+      how_h2: "როგორ მუშაობს",
+      how_desc: "სამი პარალელური პროცესი უწყვეტად მუშაობს, ორი მიკროკონტროლერისა და ღრუბლოვანი სერვერის მეშვეობით.",
+      step1_h: "სენსორების კითხვა",
+      step1_p: "BluePill ყოველ 50მწ-ში I2C-ით კითხულობს ToF მანძილის სენსორს, ხოლო ტემპერატურის მონაცემებს SHT40-სგან UART interrupt-ის საშუალებით იღებს. ყოველ 1 წამში ორივე სენსორის მონაცემებს აერთიანებს და ESP32-ს გადასცემს.",
+      step2_h: "გადაწყვეტილების ლოგიკა",
+      step2_p: "ESP32-ზე FreeRTOS ყოველ 500მწ-ში ამოწმებს ორ პირობას: ტემპერატურა 10°C-ზე დაბალია და ცხოველი თავშესაფარშია. თუ ორივე 3-ჯერ ზედიზედ დასტურდება, გათბობა ირთვება GPIO სიგნალის, ტრანზისტორისა და რელეს გავლით. დემონსტრაციისთვის ზღვარი 29°C-ზეა დაყენებული.",
+      step3_h: "მონაცემების გაგზავნა",
+      step3_p: "ESP32 სენსორების მონაცემებს JSON ფორმატით TCP-ით უგზავნის Go ბექენდს DigitalOcean-ზე (პორტი 5678). ბექენდი HTTP API-ით (პორტი 8080) ვებ ინტერფეისს ემსახურება.",
+      step4_h: "ლაივ ვიდეო",
+      step4_p: "OV5640 კამერა კადრებს იღებს და ESP32-ს გადასცემს, რომელიც JPEG-ში კოდირებს და RTSP-ით DigitalOcean-ზე გადასცემს. MediaMTX ffmpeg-ის საშუალებით H.264-ში გარდაქმნის და WebRTC-ით ბრაუზერს აწვდის.",
+      step5_h: "გათბობის მართვა",
+      step5_p: "ESP32 GPIO პინიდან გასცემს სიგნალს, რომელიც 2N2222A ტრანზისტორს ხსნის. ტრანზისტორი სიგნალს ამძლავრებს და ოპტოიზოლირებულ რელეს რთავს, რის შედეგადაც 12V გამათბობელი ელემენტები ამუშავდება.",
+      step6_h: "დისტანციური მონიტორინგი",
+      step6_p: "მოხალისე ბრაუზერში ხსნის DigitalOcean-ის IP მისამართს და რეალური დროის სენსორების მონაცემებს და ვიდეოს ხედავს. ხელმისაწვდომია ქართულ და ინგლისურ ენებზე.",
+      block_label: "არქიტექტურა",
+      block_h2: "ფუნქციონალური ბლოკ-დიაგრამა",
+      comp_label: "აპარატურა",
+      comp_h2: "კომპონენტები",
+      comp_desc: "თითოეული კომპონენტი სისტემაში კონკრეტული ფუნქციისთვის იქნა შერჩეული. ჯამური ღირებულება: 378 ლარი.",
+      c1_role: "ESP32-S3 + OV5640 კამერის მოდული. FreeRTOS-ზე მუშაობს, Wi-Fi-ს, ვიდეო სტრიმინგს, გათბობის ლოგიკასა და სერვერთან კომუნიკაციას მართავს.",
+      c1_tag: "მთავარი კონტროლერი",
+      c2_role: "კითხულობს ორივე სენსორს და მიღებულ მონაცემებს ყოველ 1 წამში UART-ით ESP32-ს გადასცემს.",
+      c2_tag: "სენსორების კვანძი",
+      c3_role: "სისტემაში გამოყენებულია Time-of-Flight (ToF) მანძილის სენსორი, რომელიც ცხოველის თავშესაფარში ყოფნას იმ შემთხვევაში აფიქსირებს, თუ მასთან მანძილი 480 მმ-ზე ნაკლებია.",
+      c4_role: "სისტემაში ინტეგრირებულია ტემპერატურისა და ტენიანობის სენსორი, რომელიც დაკავშირებულია UART bridge მოდულთან. ეს მოდული ავტომატურად გასცემს მონაცემებს ASCII ფორმატში.",
+      c5_role: "NPN ტრანზისტორი გამოყენებულია როგორც ელექტრონული გასაღები, რომელიც ESP32-ის 3.3V GPIO სიგნალს ამძლავრებს 5V-იანი რელეს კოჭის (Relay Coil) ასამუშავებლად.",
+      c5_tag: "სიგნალის გამაძლიერებელი",
+      c6_name: "ოპტოიზოლირებული რელე",
+      c6_role: "SRD-05VDC. გათბობის 12V წრედს ხსნის. ოპტიკური იზოლაცია დაბალი ძაბვის მართვის სქემას მაღალი ძაბვის დატვირთვისგან გამოყოფს.",
+      c7_name: "გამათბობელი ელემენტები",
+      c7_role: "სისტემის ძალოვან ნაწილში გამოყენებულია 12V / 30W სიმძლავრის მოქნილი პოლიამიდის გამათბობელი ელემენტები. მათი ელექტრომომარაგება ხორციელდება უშუალოდ 12V-იანი კვების წყაროდან.",
+      c8_role: "ფიქსირებული საჯარო IP. Go ბექენდს (TCP :5678, HTTP :8080) და MediaMTX-ს RTSP→WebRTC ვიდეო კონვერტაციისთვის უშვებს.",
+      gantt_label: "დაგეგმვა", gantt_h2: "განტის დიაგრამა", gantt_planned: "დაგეგმილი", gantt_actual: "რეალური", gantt_task: "ამოცანა", gantt_student: "სტუდენტი", gantt_status: "სტატუსი",
+      budget_label: "ბიუჯეტი",
+      budget_h2: "ბიუჯეტი",
+      b_col1: "მოწყობილობა / დეტალი", b_col2: "რაოდ.", b_col3: "ფასი / ერთეული (₾)", b_col4: "ჯამი (₾)", b_total: "სულ",
+      diag_label: "არქიტექტურა",
+      diag_h2: "C4 მოდელის დიაგრამები",
+      diag_desc: "სისტემის არქიტექტურა სამ დეტალიზაციის დონეზე: კონტექსტი, კონტეინერები და კომპონენტები.",
+      tab_c1: "C1: სისტემის კონტექსტი",
+      tab_c2ctrl: "C2: მართვის სისტემა",
+      tab_c2web: "C2: ვებ ტექნოლოგიები",
+      tab_c2heat: "C2: გათბობის მართვა",
+      tab_c3ctrl: "C3: მართვის სისტემა",
+      tab_c3web: "C3: ვებ ტექნოლოგიები",
+      cap_c1: "ჭკვიანი თავშესაფარი და მისი გარემომცველი ეკოსისტემა: სისტემის გარე აქტორები: მოხალისე, თავშესაფარი და ცხოველი.",
+      cap_c2ctrl: "მართვის სისტემის კონტეინერები: სენსორების კითხვა, გადაწყვეტილების ლოგიკა, რელეს კონტროლი და სერვერთან კომუნიკაცია.",
+      cap_c2web: "ვებ ტექნოლოგიები DigitalOcean-ზე: Go ბექენდი, MediaMTX ვიდეოს დამუშავებისთვის და HTML/JS ვებ ინტერფეისი.",
+      cap_c2heat: "გათბობის ქვესისტემა: SHT40 ტემპერატურის სენსორი, ToF მანძილის სენსორი, რელე და 12V გამათბობელი ელემენტები.",
+      cap_c3ctrl: "მართვის სისტემის შიდა კომპონენტები: BluePill სენსორებს კითხულობს და ESP32-ს აწვდის; ESP32 გათბობის ლოგიკასა და სტრიმინგს მართავს.",
+      cap_c3web: "ვებ ტექნოლოგიების შიდა კომპონენტები: TCP სერვერი, HTTP API, MediaMTX WebRTC გამოქვეყნებისთვის და სამი ვებ პანელი.",
+      shelter_label: "ფიზიკური მშენებლობა",
+      shelter_h2: "თავშესაფრის კონსტრუქცია",
+      shelter_desc: "500×500×550მმ ხის კონსტრუქცია, მიწიდან 80მმ-ით ამაღლებული. ტოლით დაფარული სახურავი. გვერდითა შესასვლელი ქარისგან დასაცავად.",
+      shelter_cap1: "ელექტრონიკის განლაგება: კომპონენტების განთავსება კორპუსში (20×15სმ პანელი)",
+      shelter_cap2: "სამშენებლო ნახაზი: თავშესაფრის გვერდითი ხედი განზომილებებით",
+      shelter_cap_front: "წინა მხარე",
+      shelter_cap_side: "გვერდითა მხარე",
+      shelter_cap_top: "ზედა მხარე",
+      team_label: "გუნდი",
+      team_h2: "გუნდის წევრები",
+      team_desc: "სამი ადამიანის გუნდი: თბილისი, საქართველო.",
+      site_name: "ჭკვიანი თავშესაფარი",
+      team1_name: "თამარ ჯაში",
+      team2_name: "გრიშა ტონერიანი",
+      team3_name: "მარი დავლაძე",
+      team1_p: "ტექნიკური ლიდერი: Hardware & Frontend. სქემის დიზაინი, პროგრამული უზრუნველყოფის დამუშავება, პროექტის მენეჯმენტი, დოკუმენტაცია.",
+      team2_p: "ტექნიკური ლიდერი: Backend & Streaming. Go სერვერი, MediaMTX ინტეგრაცია, ვიდეო მილსადენი, დოკუმენტაცია.",
+      team3_p: "ჩაშენებული პროგრამული უზრუნველყოფის სპეციალისტი. სისტემის ადმინისტრირება, ბექენდის დამუშავება, ბიუჯეტის მართვა, დოკუმენტაცია.",
+      gh_label: "საცავი",
+      gh_h2: "პროექტის ფაილები GitHub-ზე",
+      gh_desc: "პროექტის ყველა მასალა ღიაა და ხელმისაწვდომია GitHub-ის საცავში.",
+      gh_t1: "ნახაზები", gh_t2: "ცხრილები", gh_t3: "საბოლოო ანგარიში",
+      gh_t4: "დატაშიტები", gh_t5: "მომხმარებლის სახელმძღვანელო", gh_t6: "კოდები", gh_t7: "პრეზენტაცია",
+      gh_btn: "GitHub საცავი",
+      footer: "ჭკვიანი თავშესაფარი · IoT სისტემა ქუჩის ცხოველების კეთილდღეობისთვის · 2026"
+    }
+  };
+
+  function setLang(lang) {
+    const t = translations[lang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.documentElement.lang = lang;
+  }
+
+  function showDiagram(id, el) {
+    document.querySelectorAll('.diagram-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('d-' + id).classList.add('active');
+    el.classList.add('active');
+  }
+
+  setLang('ka');
+</script>
+</body>
+</html>
